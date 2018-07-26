@@ -18,7 +18,20 @@ The output of this query is a list of all logins where the browser language was 
 
 From the output we can either extract the set of users with this property or do analysis on this subset of login data itself.
 
-To extract the set of unique `loginid` (i.e., after discarding the duplicates), we can just do a further `groupby` on `loginid`. **Let's assume that we have done so and extracted the set of unique `loginid` as a comma-separated list `L`.**
+To extract the set of unique `loginid` (i.e., after discarding the duplicates), we can just do a further `groupby` on `loginid`. Here's the query for doing so:
+```
+WITH buid AS (
+  SELECT * FROM betonmarkets.production_servers_v2() as ps
+  CROSS JOIN dblink(ps.srvname, $$
+    SELECT loginid, binary_user_id FROM betonmarkets.client;
+  $$) out(loginid TEXT, binary_user_id BIGINT)
+) SELECT buid.loginid
+FROM users.login_history AS ulh JOIN buid ON buid.binary_user_id = ulh.binary_user_id
+WHERE ((environment like '%LANG=ZH_CN') or (environment like '%LANG=TW_CN'))
+GROUP BY buid.loginid
+```
+
+**Let's assume that we have done so and extracted the set of unique `loginid` as a comma-separated list `L`.**
 
 ## Extract all contracts purchased by a specified set of users
 Use the following PostgreSQL query on `reportdb` or its replica:
