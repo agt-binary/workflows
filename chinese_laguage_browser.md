@@ -1,7 +1,7 @@
 # Purpose
-This workflow extracts all users who have ever used a browser with the language set to `ZH_CN` or `TW_CN`, and then extracts all their contracts (excluding those on volatility indices). We then describe a way of identifying times of interest when there were disproportionately many winning or losing contracts.
+This workflow extracts all users who have ever used a browser with the language set to `ZH_CN` or `ZH_TW`, and then extracts all their contracts (excluding those on volatility indices). We then describe a way of identifying times of interest when there were disproportionately many winning or losing contracts.
 
-## Extract all logins with a browser set to `ZH_CN` or `TW_CN`
+## Extract all logins with a browser set to `ZH_CN` or `ZH_TW`
 Use the following PostgreSQL query on `reportdb` or its replica:
 ```
 WITH buid AS (
@@ -11,10 +11,10 @@ WITH buid AS (
   $$) out(loginid TEXT, binary_user_id BIGINT)
 ) SELECT ulh.id, ulh.history_date, ulh.environment, buid.loginid, buid.binary_user_id
 FROM users.login_history AS ulh JOIN buid ON buid.binary_user_id = ulh.binary_user_id
-WHERE ((environment like '%LANG=ZH_CN') or (environment like '%LANG=TW_CN'))
+WHERE ((environment like '%LANG=ZH_CN') or (environment like '%LANG=ZH_TW'))
 ORDER BY history_date DESC;
 ```
-The output of this query is a list of all logins where the browser language was `ZH_CN` or `TW_CN`.
+The output of this query is a list of all logins where the browser language was `ZH_CN` or `ZH_TW`.
 
 From the output we can either extract the set of users with this property or do analysis on this subset of login data itself.
 
@@ -27,7 +27,7 @@ WITH buid AS (
   $$) out(loginid TEXT, binary_user_id BIGINT)
 ) SELECT buid.loginid
 FROM users.login_history AS ulh JOIN buid ON buid.binary_user_id = ulh.binary_user_id
-WHERE ((environment like '%LANG=ZH_CN') or (environment like '%LANG=TW_CN'))
+WHERE ((environment like '%LANG=ZH_CN') or (environment like '%LANG=ZH_TW'))
 GROUP BY buid.loginid
 ```
 
@@ -93,7 +93,7 @@ where output.client_loginid in ('CR106163', ..., 'MX43167')
 In particular, we can replace `('CR106163', ..., 'MX43167')` with `L` (from the previous section).
 
 ## Identify times of significant trading in a selected set of contracts and highlight disproportionate wins and losses
-The following code assume that an appropriate set of contracts is available as a `CSV` file. For example, we can collect the set of contracts that were purchased by users who had ever logged in using a browser whose language was set to `ZH_CN` or `TW_CN`.
+The following code assume that an appropriate set of contracts is available as a `CSV` file. For example, we can collect the set of contracts that were purchased by users who had ever logged in using a browser whose language was set to `ZH_CN` or `ZH_TW`.
 
 ```
 import pandas as pd
