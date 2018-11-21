@@ -1,11 +1,11 @@
-Client's name
+Client's name.
 ```sql
 SELECT CONCAT_WS(' ', salutation, first_name, last_name) AS name
 FROM betonmarkets.client
 where true [[and binary_user_id = {{binary_userid}}]]  [[and email like CONCAT({{email}}, '%')]] [[and loginid = {{Account_loginid}}]]
 LIMIT 1
 ```
-Client's country
+Client's country.
 ```sql
 select
     case
@@ -242,7 +242,7 @@ where true [[and binary_user_id = {{binary_userid}}]]  [[and email like CONCAT({
 limit 1
 ```
 
-Client's account opening reason
+Client's account opening reason.
 ```sql
 SELECT account_opening_reason
 FROM betonmarkets.client
