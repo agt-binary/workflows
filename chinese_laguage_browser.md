@@ -134,5 +134,5 @@ significance_mask = (df2['payout_price']>999)
 df3 = df2[significance_mask].style.applymap(color_outliers, subset=['sell/max_payout'])
 df3 # displays the outcomes
 ```
-Here's an example output screengrab:
+Here's an example output screenshot:
  ![Output](significant.png)
